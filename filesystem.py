@@ -114,9 +114,8 @@ class FileReal(FileBase):
 
     def write(self, content: bytes) -> None:
         self.parent = cast(DirectoryBase, self.parent)
-        if self.parent.has(self.name) or os.path.isfile(self.full_path):
-            with open(self.full_path, 'wb') as file:
-                file.write(content)
+        with open(self.full_path, 'wb') as file:
+            file.write(content)
 
 
 @define
@@ -134,7 +133,16 @@ class DirectoryReal(DirectoryBase):
         return children
 
     def get(self, item: str) -> Union[FileBase, 'DirectoryBase']:
-        return FileReal(self, item)
+        full_path = os.path.join(self.full_path, item)
+        if os.path.exists(full_path):
+            if os.path.isdir(full_path):
+                return DirectoryReal(self, item)
+            elif os.path.isfile(full_path):
+                return FileReal(self, item)
+            else:
+                raise ValueError(f"Unsupported object type '{full_path}'.")
+        else:
+            raise ValueError(f"object at '{full_path}' does not exist.")
 
     def has(self, item: str) -> bool:
         return os.path.exists(os.path.join(self.full_path, item))
