@@ -7,7 +7,7 @@ use structopt::StructOpt;
 enum Subcommand {
 
     #[structopt(name = "why-depends")]
-    WHY_DEPENDS {
+    WhyDepends {
         #[structopt(long = "errors-only", default = false)]
         errors_only: bool,
 
@@ -16,18 +16,21 @@ enum Subcommand {
     },
 
     #[structopt(name = "find-error")]
-    FIND_ERROR {
-        #[structopt()]
+    FindError {
+        #[structopt(name = "error")]
+        error: String
     },
 
     #[structopt(name = "mod-info")]
-    MOD_INFO = {
-        #[structopt(name = "")]
-    }
+    ModInfo = {
+        // modid of the mod to print info about. If not provided, print all.
+        #[structopt(name = "modid")]
+        modid: Option<String>,
+    },
 
     #[structopt(name = "clean")]
-    CLEAN {
-        
+    Clean {
+
     },
 }
 
@@ -54,10 +57,12 @@ struct SharedOpt {
     profile_dir: PathBuf,
 
     // subcommand
+    #[structopt(name = "subcommand")]
+    subcommand: Subcommand,
 }
 
 fn main() {
     println!("Hello, world!");
 
-
+    let args = SharedOpt::from_args();
 }
