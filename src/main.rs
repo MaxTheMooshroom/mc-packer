@@ -8,7 +8,7 @@ enum Subcommand {
 
     #[structopt(name = "why-depends")]
     WhyDepends {
-        #[structopt(long = "errors-only", default = false)]
+        #[structopt(long = "errors-only")]
         errors_only: bool,
 
         #[structopt(name = "modid", required = true)]
@@ -22,7 +22,7 @@ enum Subcommand {
     },
 
     #[structopt(name = "mod-info")]
-    ModInfo = {
+    ModInfo {
         // modid of the mod to print info about. If not provided, print all.
         #[structopt(name = "modid")]
         modid: Option<String>,
@@ -52,17 +52,20 @@ struct SharedOpt {
     #[structopt(long = "lie-depends")]
     lie_mods: Option<String>,
 
-    // directory of modded minecraft profile
-    #[structopt(parse(from_os_str))]
-    profile_dir: PathBuf,
+    #[structopt(
+        parse(from_os_str),
+        long = "profile-dir",
+        help = "directory of modded minecraft profile. Default: listens for profile to boot"
+    )]
+    profile_dir: Option<PathBuf>,
 
     // subcommand
-    #[structopt(name = "subcommand")]
+    #[structopt(subcommand)]
     subcommand: Subcommand,
 }
 
 fn main() {
-    println!("Hello, world!");
+    let _args = SharedOpt::from_args();
 
-    let args = SharedOpt::from_args();
+
 }
